@@ -1,81 +1,64 @@
-#Jogo da Forca simples usando listas, while e for loop em Python
+#Criando Jogo da Forca com conceitos básicos de Python :)
 
-import random #Módulo para randomizar escolhas das palavras no jogo
+import random #Importa a biblioteca que usaremos para randomizar a escolha das palavras no jogo
 
-#Cada lista corresponde a um tema
-#1-animais
-#2-países
-#3-objetos
-listaPalavras = [["peixe","baleia","polvo"],["madagascar","brasil","argentina"],["pedra","papel","tesoura"]]
+dicionarioTemas = { #Criamos um dicionário com três temas, cada um com quatro palavras para as partidas.
+  "cores":["magenta", "ciano", "esmeralda", "chumbo"],
+  "frutas":["acerola", "goiaba", "graviola", "abacate"],
+  "estados":["pernambuco", "alagoas", "acre", "tocantins"]
+}
 
-#Loop do jogo
-
+#Início do loop do Jogo da Forca
 while True:
-    print("Jogo da Forca\n")
-    print("Escolha uma opção: 1-Animais| 2-Países| 3-Objetos| 4- Sair do jogo")
-    entrada = input("Digite um número: ")
+  print("Jogo da Forca\nTemas: 1-Cores | 2-Frutas | 3-Estados | 4- Sair do Jogo")
+  entrada = str(input("Digite uma opção: "))
+  #Condicionais para a entrada do jogador
 
-    #Condicionais para a escolha do usuário
+  if entrada == "4":
+    print("Você saiu do jogo :(")
+    break # Termina o loop e finaliza o jogo
+  elif entrada == "1":
+    palavra = random.choice(dicionarioTemas["cores"])#Seleciona uma palavra aleatória da lista "cores"
+  elif entrada == "2":
+    palavra = random.choice(dicionarioTemas["frutas"])#Seleciona uma palavra aleatória da lista "frutas"
+  elif entrada == "3":
+    palavra = random.choice(dicionarioTemas["estados"])#Seleciona uma palavra aleatória da lista "estados"
+  
+  tentativas = ["-"]*len(palavra) # Aqui criamos uma lista preenchida com "-" um para cada letra da palavra selecionada.
+  letrasErradas = [] #Lista vazia que armazenará letras digitadas pelo jogador que não estão na palavra.
+  print("Vamos começar, sua palavra tem  " + str(len(palavra)) + " letras.\n")#Mostra para o jogador o número de letras presentes na palavra selecionada
 
-    if entrada == "4":
-        break #finaliza o loop
-    elif entrada== "1":
-        palavra = random.choice(listaPalavras[0])#seleciona aleatoriamente uma palavra da primeira lista
+  for i in range(18):
+    #O range será igual ao número de chances que o jogador terá para completar a palavra.
+    print("".join(tentativas))#Mostra para o jogador a estrutura da palavra
+    jogada = str(input("Digite uma letra: "))
+    #Verifica se a letra digitada consta na palavra selecionada
+    if jogada in palavra: 
+      #Se a letra escolhida consta na palavra então é feita a substituição na lista tentativas pela letra na mesma posição da palavra
+      for j in range(len(palavra)):
+        if palavra[j] == jogada:
+          tentativas[j] = jogada
+      resposta = "".join(tentativas)
+      
+      print("Forca: " + resposta + " Chances restantes: " + str(17 - i)) #Aqui mostramos o progresso do jogador e quantas rodadas faltam para o fim da partida
 
-    elif entrada== "2":
-        palavra = random.choice(listaPalavras[1])#seleciona aleatoriamente uma palavra da segunda lista
+      if resposta == palavra: 
+        print("Parabéns, você acertou a palavra é " + resposta + "!")
+        break #Finaliza o for loop pois o jogador ganhou
 
-    elif entrada== "3":
-        palavra = random.choice(listaPalavras[2])#seleciona aleatoriamente uma palavra da terceira lista
+    else:
+      letrasErradas +=[jogada] #Caso a letra escolhida pelo jogadpr na conste na palavra ele é adicionada a lista "letrasErradas"
+      resposta = "".join(tentativas)
+      print("Forca: " + resposta + " Chances restantes: " + str(17-i)) #Aqui mostramos o progresso do jogador e quantas rodadas faltam para o fim da partida
+      letrasJaUsadas = " ".join(letrasErradas)
+      print("A letra " + jogada + " não está na palavra\n Letras erradas já digitadas: " + letrasJaUsadas) #Avisa ao jogador que a letra digitada está errada e mostra quais letras erradas ele já usou
 
-    forca = ["-"] * len(palavra) #cria uma lista com "-" para cada letra da palavra
-
-    letras_erradas = []#lista vazia para armazenar letras erradas digitadas pelo usuário
-    
-    #Antes do loop do jogo vamos adicionar um print informando o tamanho da palavra escolhida
-    print("A palavra tem " + str(len(palavra)) + " letras.")
-
-    
-    for i in range(10): #o range vai ser igual a quantidade de chances que o jogador terá para completar a palavra
-
-        jogada = input("Digite uma letra: ").lower() #transforma a letra em minúsculo
-        #Condicionais para a letra escolhida pelo jogador
-
-        if jogada in palavra: #verifica se a letra escolhida está na palavra selecionada
-            for j in range(len(palavra)):
-                if palavra[j] == jogada:
-                    forca[j] = jogada #substitui o "-" na posição [j] pela letra escolhida na lista forca
-
-            resposta = "".join(forca)#transforma a lista forca em uma string
-            print("Ok! Letra contida, forca: " + resposta)
-
-            if resposta == palavra:
-                print("Parabéns, você acertou a palavra é " + resposta + "!")
-                break #finaliza a rodada pois o usuário completou a palavra
-
-        else: #caso a letra digitada pelo jogador não esteja na palavra escolhida
-            letras_erradas +=[jogada] #adiciona a letra errada na lista de letras erradas
-            letrasErradas = "".join(letras_erradas)#transformamos a lista em string para que possâmos adicionar na frase
-            resposta = "".join(forca)
-            #Mostra para o usuário as letras não contidas que ele já usou
-            print("A letra escolhida não está contida na plavra.\n" + resposta+"\n Letras não contidas: " + letrasErradas)
-
-    else:#Se o usuário já jogou 10 vezes e ainda não acertou a palavra
-        print("Você perdeu! Forca!")
+  else: 
+    print("Você perdeu! Forca!") #Caso depois das 18 chances o jogador não tiver concluido e o for loop não for finalizado ele recebe o aviso de que perdeu o jogo.
 
 
 
-
-
-        
-
-
-
-
-
-    
-         
-         
+     
 
 
 
@@ -87,17 +70,12 @@ while True:
 
 
 
+ 
+  
+  
 
 
 
-
-
-
-
-
-
-    
-        
 
 
 
